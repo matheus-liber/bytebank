@@ -1,8 +1,17 @@
 part of bytebank_balance;
 
-class BytebankBalance extends StatelessWidget {
+class BytebankBalance extends StatefulWidget {
   final Color color;
+
   const BytebankBalance({super.key, required this.color});
+
+  @override
+  State<BytebankBalance> createState() => _BytebankBalanceState();
+}
+
+class _BytebankBalanceState extends State<BytebankBalance> {
+  bool isShowingBalance = false;
+  double userBalance = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -10,33 +19,60 @@ class BytebankBalance extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          "Saldo",
-          style: TextStyle(
-            fontSize: 20,
-            color: color,
-            fontWeight: FontWeight.w600,
-          ),
+        Row(
+          children: [
+            Text(
+              "Saldo",
+              style: TextStyle(
+                fontSize: 20,
+                color: widget.color,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            SizedBox(
+              width: 16,
+            ),
+            IconButton(
+                onPressed: () {
+                  onVisibilityBalanceClicked();
+                },
+                icon: Icon((isShowingBalance)
+                    ? Icons.visibility
+                    : Icons.visibility_off),
+                color: widget.color,
+            )
+          ],
         ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Divider(color: color, thickness: 2),
+          child: Divider(color: widget.color, thickness: 2),
         ),
         Text(
           "Conta Corrente",
           style: TextStyle(
-            color: color,
+            color: widget.color,
             fontSize: 16,
           ),
         ),
         Text(
-          "R\$ 2.500,00",
+          (isShowingBalance) ? "R\$ $userBalance" : "●●●●●",
           style: TextStyle(
-            color: color,
+            color: widget.color,
             fontSize: 32,
           ),
         ),
       ],
     );
+  }
+  onVisibilityBalanceClicked(){
+      if (isShowingBalance) {
+        setState(() {
+          isShowingBalance = false;
+        });
+      } else {
+        setState(() {
+          isShowingBalance = true;
+        });
+      }
   }
 }
