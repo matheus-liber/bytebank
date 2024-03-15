@@ -2,8 +2,9 @@ part of bytebank_balance;
 
 class BytebankBalance extends StatefulWidget {
   final Color color;
+  final String userID;
 
-  const BytebankBalance({super.key, required this.color});
+  const BytebankBalance({super.key, required this.color, required this.userID});
 
   @override
   State<BytebankBalance> createState() => _BytebankBalanceState();
@@ -70,6 +71,7 @@ class _BytebankBalanceState extends State<BytebankBalance> {
           isShowingBalance = false;
         });
       } else {
+
         setState(() {
           isShowingBalance = true;
         });
