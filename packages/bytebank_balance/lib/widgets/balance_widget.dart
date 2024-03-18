@@ -13,6 +13,7 @@ class BytebankBalance extends StatefulWidget {
 class _BytebankBalanceState extends State<BytebankBalance> {
   bool isShowingBalance = false;
   double userBalance = 0;
+  BalanceService balanceService = BalanceService();
 
   @override
   Widget build(BuildContext context) {
@@ -34,13 +35,12 @@ class _BytebankBalanceState extends State<BytebankBalance> {
               width: 16,
             ),
             IconButton(
-                onPressed: () {
-                  onVisibilityBalanceClicked();
-                },
-                icon: Icon((isShowingBalance)
-                    ? Icons.visibility
-                    : Icons.visibility_off),
-                color: widget.color,
+              onPressed: () {
+                onVisibilityBalanceClicked();
+              },
+              icon: Icon(
+                  (isShowingBalance) ? Icons.visibility : Icons.visibility_off),
+              color: widget.color,
             )
           ],
         ),
@@ -65,16 +65,41 @@ class _BytebankBalanceState extends State<BytebankBalance> {
       ],
     );
   }
-  onVisibilityBalanceClicked(){
-      if (isShowingBalance) {
-        setState(() {
-          isShowingBalance = false;
-        });
-      } else {
 
-        setState(() {
-          isShowingBalance = true;
-        });
-      }
+  onVisibilityBalanceClicked() {
+    if (isShowingBalance) {
+      setState(() {
+        isShowingBalance = false;
+      });
+    } else {
+      balanceService.hasPin(userId: widget.userID).then((bool hasPin) {
+        if (hasPin) {
+          showPinDialog(context, isRegister: false).then((String? pin) {
+            if (pin != null) {
+              balanceService
+                  .getBalance(userId: widget.userID, pin: pin)
+                  .then((double balance) {
+                setState(() {
+                  isShowingBalance = true;
+                });
+              });
+            }
+          });
+        } else {
+          showPinDialog(context, isRegister: true).then((String? pin) {
+            if (pin != null) {
+              balanceService
+                  .createPin(userId: widget.userID, pin: pin)
+                  .then((double balance) {
+                    setState(() {
+                      isShowingBalance = true;
+                      userBalance = balance;
+                    });
+              });
+            }
+          });
+        }
+      });
+    }
   }
 }
